@@ -13,7 +13,7 @@ pipeline {
         timeout(time: 30, unit: 'MINUTES')
     }
     parameters{
-        //string(name: 'version',  description: 'Enter the application version')
+        string(name: 'version',  description: 'Enter the application version')
         choice(name: 'deploy_to', choices: ['dev', 'qa', 'prod'], description: 'Pick something')
     }
     stages {
@@ -21,9 +21,8 @@ pipeline {
         stage('Setup Environment'){
             steps{
                 script{
-                    def packageJson = readJSON file: 'package.json'
-                    appVersion = packageJson.version
-                    echo "Version is: $appVersion"
+                    appVersion = params.version
+                    environment = params.deploy_to
                 }
             }
         }
@@ -37,7 +36,7 @@ pipeline {
                             aws eks update-kubeconfig --region $REGION --name expense-dev
                             kubectl get nodes
                             cd helm
-                            sed -i 's/IMAGE_VERSION/${appVersion}/g' values-${environment}.yaml
+                            sed -i 's/IMAGE_VERSION/${params.version}/g' values-${environment}.yaml
                             helm upgrade --install $COMPONENT -n $PROJECT -f values-${environment}.yaml .
                         """
                     }
