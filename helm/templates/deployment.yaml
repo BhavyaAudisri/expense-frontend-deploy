@@ -31,7 +31,7 @@ spec:
               path: nginx.conf
        containers:
        - name: nginx
-         image: "{{ .Values.deployment.image_URL }}:{{ .Values.deployment.version }}"
+         image: joindevops/frontend:1.2.0 #"{{ .Values.deployment.image_URL }}:{{ .Values.deployment.version }}"
          resources:
           # soft limit
           requests:
