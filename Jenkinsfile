@@ -38,8 +38,6 @@ pipeline {
                             cd helm
                             sed -i 's/IMAGE_VERSION/${params.version}/g' values-${environment}.yaml
                             helm upgrade --install $COMPONENT -n $PROJECT -f values-${environment}.yaml .
-                            kubectl rollout restart deployment frontend -n expense
-                            kubectl get pods -n expense
                         """
                     }
                 }
