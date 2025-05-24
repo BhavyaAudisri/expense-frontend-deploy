@@ -13,7 +13,7 @@ pipeline {
         timeout(time: 30, unit: 'MINUTES')
     }
     parameters{
-        string(name: 'version',  description: 'Enter the application version')
+        //string(name: 'version',  description: 'Enter the application version')
         choice(name: 'deploy_to', choices: ['dev', 'qa', 'prod'], description: 'Pick something')
     }
     stages {
@@ -21,8 +21,9 @@ pipeline {
         stage('Setup Environment'){
             steps{
                 script{
-                    appVersion = params.version
-                    environment = params.deploy_to
+                    def packageJson = readJSON file: 'package.json'
+                    appVersion = packageJson.version
+                    echo "Version is: $appVersion"
                 }
             }
         }
