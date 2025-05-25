@@ -42,6 +42,7 @@ pipeline {
                             sed -i 's/IMAGE_VERSION/${params.version}/g' values-${environment}.yaml
                             helm upgrade --install $COMPONENT -n $PROJECT -f values-${environment}.yaml .
                             elif [ ${params.ACTION} == 'destroy' ]
+                            then
                             helm uninstall $COMPONENT -n $PROJECT
                             fi
                         """
