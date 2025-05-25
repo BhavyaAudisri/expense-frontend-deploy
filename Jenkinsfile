@@ -34,11 +34,16 @@ pipeline {
                 script{
                     withAWS(region: 'us-east-1', credentials: 'AWS-CREDS') {
                         sh """
+                            if [ ${params.ACTION} == 'apply' ]
+                            then
                             aws eks update-kubeconfig --region $REGION --name expense-dev
                             kubectl get nodes
                             cd helm
                             sed -i 's/IMAGE_VERSION/${params.version}/g' values-${environment}.yaml
                             helm upgrade --install $COMPONENT -n $PROJECT -f values-${environment}.yaml .
+                            elif [ ${params.ACTION} == 'destroy' ]
+                            helm uninstall $COMPONENT -n $PROJECT
+                            fi
                         """
                     }
                 }
