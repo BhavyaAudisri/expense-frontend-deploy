@@ -15,7 +15,6 @@ pipeline {
     parameters{
         string(name: 'version',  description: 'Enter the application version')
         choice(name: 'deploy_to', choices: ['dev', 'qa', 'prod'], description: 'Pick something')
-        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select Action')
     }
     stages {
 
@@ -34,17 +33,12 @@ pipeline {
                 script{
                     withAWS(region: 'us-east-1', credentials: 'AWS-CREDS') {
                         sh """
-                            if [ ${params.ACTION} == 'apply' ]
-                            then
                             aws eks update-kubeconfig --region $REGION --name expense-dev
                             kubectl get nodes
                             cd helm
                             sed -i 's/IMAGE_VERSION/${params.version}/g' values-${environment}.yaml
                             helm upgrade --install $COMPONENT -n $PROJECT -f values-${environment}.yaml .
-                            elif [ ${params.ACTION} == 'destroy' ]
-                            then
-                            helm uninstall $COMPONENT -n $PROJECT
-                            fi
+
                         """
                     }
                 }
